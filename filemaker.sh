@@ -10,7 +10,7 @@
 
 for ((i = 1; i <= $1; i++))
 do
-    if [ $i == 1 ]
+    if [ $i == 1 ];
     then
         touch $2
     else

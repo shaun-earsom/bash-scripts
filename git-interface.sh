@@ -57,8 +57,10 @@ newRepository() # Create a new repository
     echo "--Setting up local directory for use."
     git init
     echo "--Wrapping up and pushing first commit."
-    git add README.mdgit commit -m "git-interface.sh:first commit"
-    git branch -M maingit remote add origin https://github.com/$git_username/$repo_name.git
+    git add README.md
+    git commit -m "git-interface.sh:first commit"
+    git branch -M main
+    git remote add origin https://github.com/$git_username/$repo_name.git
     git push -u origin main
     echo "--Done! Back to the menu.  Also returning you to the directory you started in."
     dirMoveBack

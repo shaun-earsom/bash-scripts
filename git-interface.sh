@@ -16,6 +16,7 @@ title() # Display the title
     - For when you just... can't -
     ------------------------------"
 }
+
 menu() # Display the menu
 {
     echo "    -------------Menu-------------
@@ -25,18 +26,16 @@ menu() # Display the menu
     4) Pull files down to this machine
     5) Exit out of this madness..."
 }
+
 dirMoveTo() # Gets current directory, moves to correct directory, creates dir if needed.
 {
-    current_dir=$(pwd)
-    if [ ! -d "$repo_dir" ]; then
-        mkdir $repo_dir
+    if [ ! -d "$repo_dir" ]
+    then
+        mkdir $repo_name # TODO: Consider fixing this loop so it can create multiple dirs if needed.
     fi
     cd $repo_dir
 }
-dirMoveBack() # Moves back to where you started.
-{
-    cd $current_dir
-}
+
 newRepository() # Create a new repository
 {
     echo "What do you want to call your new repository?"
@@ -45,10 +44,9 @@ newRepository() # Create a new repository
     read repo_dir
     echo "What is your git username?"
     read git_username
-    echo "--Process complete!"
     echo "Please provide your github key."
     read git_key
-    echo "--Moving to installation location and verifying it exists."
+    echo "--Creating repository directory if it doesn't exist. Moving to the directory."
     dirMoveTo
     echo "--Creating repo on github.com."
     curl -H "Authorization: token $git_key" --data '{"name":"$repo_name"}' https://api.github.com/user/repos
@@ -62,11 +60,11 @@ newRepository() # Create a new repository
     git branch -M main
     git remote add origin https://github.com/$git_username/$repo_name.git
     git push -u origin main
-    echo "--Done! Back to the menu.  Also returning you to the directory you started in."
-    dirMoveBack
+    echo "--Done! Back to the menu."
     title
     menu
 }
+
 main() # Run the main program
 {
     PS3='Your Selection: '

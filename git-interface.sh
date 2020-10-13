@@ -1,16 +1,21 @@
 #!/bin/bash
 # Use: git-interface.sh
 
+# Description: 
+# This is a simple text interactive interface for some of the basic functions of Git.
+# I made this using VS Code, tied to my copy of WSL2 which is running Ubuntu with Git installed.
+# This seemed like a good idea to help refresh myself on Git and build out my bash portfollio.
+
 # What I learned:
 # 1. I learned how to build a menu. Nifty!
 # 2. Prompt Statements and how to use the right one for the job.
 # 3. Creating the repository on the github side requires using the API as well as an Oauth style key.
-#    It may be easier to go to the website for one-offs...
+#    It may be easier to go to the website for one-offs.
 # 4. No matter what directory manipulation you do in a script, once the script ends, you're back to the directory you started in.
 # 5. QUOTES MATTER IN GIT API!!  "{\"name\":\"$repo_name\"}" is correct.  '{\"name\":\"$repo_name\"}' is not.
 
  
-title() # Display the title
+title() # Display the title.
 {
     echo "    ------------------------------
     -- Super Lazy Git Interface --
@@ -19,7 +24,7 @@ title() # Display the title
     ------------------------------"
 }
 
-menu() # Display the menu
+menu() # Display the menu.
 {
     echo "    -------------Menu-------------
     1) New repository
@@ -29,7 +34,7 @@ menu() # Display the menu
     5) Exit out of this madness..."
 }
 
-repoInfo() # Define local repo path and name
+repoInfo() # Define local repo path and name.
 {
     echo "What is the name of your local repository?"
     read -e repo_name
@@ -37,9 +42,9 @@ repoInfo() # Define local repo path and name
     read -e repo_dir
 }
 
-dirVerify() # Check if local repository folder exists
+dirVerify() # Check if local repository folder exists.
 {
-    read -r -p "Do you need to make a new local folder? [y/n]: " yesNo #doing it this way here because it's a simple yes/no. the other reads have longer answers
+    read -r -p "Do you need to make a new local folder? [y/n]: " yesNo #doing it this way here because it's a simple yes/no. the other reads have longer answers.
     case $yesNo in
         [yY][eE][sS]|[yY])
             mkdir $repo_dir/$repo_name
@@ -69,11 +74,11 @@ repoLocalSetup() # Sets up the local repo folder.
     git commit -m "git-interface.sh:first commit"
     git branch -M main
     git remote add origin https://github.com/$git_username/$repo_name.git
-    git push -u origin main # You'll have to type your username and password here... it's fine...
+    git push -u origin main # You'll have to type your username and password here. it's fine.
     echo "--Done! Back to the menu."
 }
 
-newRepository() # Create a new repository
+newRepository() # Create a new repository.
 {
     repoInfo
     dirVerify
@@ -96,7 +101,7 @@ existRepository() # Connect to an existing repository.
     menu
 }
 
-repoPush()
+repoPush() # Pushes a single file up to the repo.
 {
     repoInfo
     dirVerify
@@ -110,7 +115,7 @@ repoPush()
     git push
 }
 
-repoPull()
+repoPull() # Pulls a branch down to your local repository.
 {
     repoInfo
     dirVerify
@@ -121,7 +126,7 @@ repoPull()
     git pull \'$remoteName\' \'$branchName\'
 }
 
-main() # Run the main program
+mainMenu() # Run the main program.
 {
     PS3='Your Selection: '
     options=("New repository" "Connect to an existing repository" "Push files up to git" "Pull files down to this machine" "Exit out of this madness...")
@@ -154,4 +159,4 @@ main() # Run the main program
 }
 
 title
-main
+mainMenu

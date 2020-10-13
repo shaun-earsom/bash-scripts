@@ -31,12 +31,10 @@ menu() # Display the menu
 
 repoInfo() # Define local repo path and name
 {
-    echo "What do you want to call your new repository?"
+    echo "What is the name of your local repository?"
     read -e repo_name
     printf "Which local directory should contain your repository?\n(NOTE: using \"~\" won't work use \"/home/USERNAME\" instead.)\n"
     read -e repo_dir
-    echo "What is your git username?"
-    read -e git_username
 }
 
 dirVerify() # Check if local repository folder exists
@@ -44,8 +42,8 @@ dirVerify() # Check if local repository folder exists
     read -r -p "Do you need to make a new local folder? [y/n]: " yesNo #doing it this way here because it's a simple yes/no. the other reads have longer answers
     case $yesNo in
         [yY][eE][sS]|[yY])
-            repoInfo
-            mkdir $repo_name
+            mkdir $repo_dir/$repo_name
+            cd $repo_dir/$repo_name
             ;;
         [nN][oO]|[nN])
             if [ ! -d $repo_dir/$repo_name ]
@@ -53,14 +51,16 @@ dirVerify() # Check if local repository folder exists
                 echo "--$repo_dir/$repo_name does not exist, please select yes."
                 dirVerify
             fi
-        ;;
+            ;;
         *) echo "Invalid option $REPLY";;
-    cd $repo_dir/$repo_name
+    esac
 }
 
-localDirSetup() # Does the local setup.
+repoLocalSetup() # Sets up the local repo folder.
 {
-        echo "--Making generic README.md."
+    echo "What is your git username?"
+    read -e git_username
+    echo "--Making generic README.md."
     echo "# $repo_name" >> README.md
     echo "--Setting up local directory for use."
     git init
@@ -81,7 +81,7 @@ newRepository() # Create a new repository
     read -e git_key
     echo "--Creating repo on github.com."
     curl -H "Authorization: token $git_key" -d "{\"name\":\"$repo_name\"}" https://api.github.com/user/repos
-    loalDirSetup
+    localDirSetup
     title
     menu
 }
@@ -90,10 +90,35 @@ existRepository() # Connect to an existing repository.
 {
     repoInfo
     dirVerify
-    localSetup
+    repoLocalSetup
     echo "--Done! Back to the menu."
     title
     menu
+}
+
+repoPush()
+{
+    repoInfo
+    dirVerify
+    cd 
+    echo "What file do you want to push?"
+    read -e nameOfFile
+    echo "What is your commit comment."
+    read -e commentForCommit
+    git add $nameOfFile
+    git commit -m "$commentForCommit"
+    git push
+}
+
+repoPull()
+{
+    repoInfo
+    dirVerify
+    echo "What is the name of the remote repository you want to pull down?"
+    read -e remoteName
+    echo "What is the name of the branch you want to pull?"
+    read -e branchName
+    git pull \'$remoteName\' \'$branchName\'
 }
 
 main() # Run the main program
@@ -113,9 +138,11 @@ main() # Run the main program
                 ;;
             "Push files up to git")
                 echo "--Push files up to git"
+                repoPush
                 ;;
             "Pull files down to this machine")
                 echo "--Pull files down to this machine"
+                repoPull
                 ;;
             "Exit out of this madness...")
                 echo "--Exiting out of this madness..."

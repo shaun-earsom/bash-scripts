@@ -5,7 +5,7 @@
 # 1. I learned how to build a menu. Nifty!
 # 2. Prompt Statements and how to use the right one for the job.
 # 3. Creating the repository on the github side requires using the API as well as an Oauth style key.
-#    It may be easier to go to the website for one-offs, however if you need to make a bunch, this is the way.
+#    It may be easier to go to the website for one-offs...
 # 4. No matter what directory manipulation you do in a script, once the script ends, you're back to the directory you started in.
 # 5. QUOTES MATTER IN GIT API!!  "{\"name\":\"$repo_name\"}" is correct.  '{\"name\":\"$repo_name\"}' is not.
 

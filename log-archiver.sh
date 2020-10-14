@@ -6,9 +6,8 @@
 
 # Description: This script will operate in five steps.
 
-# Step 1 - Server information gathering:  It determines if it's archiving one server or many.  If many, it will have the user specify the IPs of
-# the servers.  If one of the servers is local the user can specify this by typing "localhost".  It will take the data from the user and form a
-# temporary list.
+# Step 1 - Server information gathering:  The script will have the user specify the IPs of the servers that the user wants to include.  If one
+# of the servers is local the user can specify this by typing "localhost".  It will take the data from the user and form a temporary list.
  
 # Step 2 - Log information gathering:  The script will then ask the user if it is archiving the same logs on each machine, or if it's archiving 
 # different files on each machine.  It will then loop through the server list and get the specifics for what is being archived. (this step is only
@@ -71,4 +70,10 @@ serverList() # Server information gathering
         (( server_num++ ))
     done
 }
+
+logInfo()
+{
+
+}
 serverList
+logInfo

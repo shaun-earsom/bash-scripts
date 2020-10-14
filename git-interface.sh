@@ -44,8 +44,8 @@ repoInfo() # Define local repo path and name.
 
 dirVerify() # Check if local repository folder exists.
 {
-    read -r -p "Do you need to make a new local folder? [y/n]: " yesNo #doing it this way here because it's a simple yes/no. the other reads have longer answers.
-    case $yesNo in
+    read -r -p "Do you need to make a new local folder? [y/n]: " yes_no #doing it this way here because it's a simple yes/no. the other reads have longer answers.
+    case $yes_no in
         [yY][eE][sS]|[yY])
             mkdir $repo_dir/$repo_name
             cd $repo_dir/$repo_name

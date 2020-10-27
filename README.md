@@ -17,7 +17,7 @@ In order to get a good data lifecycle going, we need to first harvest the data, 
 2. How to get some basic error handling and file validation in my scripts.
 
 ## git-interface.sh
-###Description: 
+### Description: 
 This is a simple text interactive interface for some of the basic functions of Git.
 I made this using VS Code, tied to my copy of WSL2 which is running Ubuntu with Git installed.
 This seemed like a good idea to help refresh myself on Git and build out my bash portfollio.

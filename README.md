@@ -1,9 +1,7 @@
 # bash-scripts
 
 ## log-archiver
-files:
-log-archiver.sh
-log-archiver.json
+files: log-archiver.sh, log-archiver.json
 ### Dependancies:
 * You're running this script from a user that has permissions to all servers & files.
 * If planning to run this script from cron, This user owns the crontab you wish to use.

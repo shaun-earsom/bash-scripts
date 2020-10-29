@@ -1,19 +1,13 @@
 {
     "config": {
-        "aws": {
-            "useaws": "n",
-            "bucketname": ""
-        },
-        "keys": {
-            "key1": "localhost"
-        },
-        "usernames": {
-            "username1": "localhost"
-        }
+        "useaws": "n",
+        "bucketname": ""
     },
     "servers": {
         "server1": {
             "host": "localhost",
+            "username": "",
+            "key": "",
             "logs": {
                 "log1": "/var/log/docker.log",
                 "log2": "/var/log/dpkg.log"

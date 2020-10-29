@@ -20,9 +20,7 @@
 # 1. How to use jq.  This thing is super handy!
 # 2. How to get some basic error handling and file validation in my scripts.
 
-#Create a few arrays and a temp dir.
-key=("null") #I want to start my counts at one rather than zero, so I supply the first value of the array.
-username=("null")
+#Create a working dir (will delete later).
 mkdir log-archiver-temp
 
 # Create log file for this run. Format: log_archive-YYYY-MM-DD
@@ -41,18 +39,8 @@ echo "$time_stamp - JSON input file validated." >> $log_file
 
 # Read information from the JSON.
 server_count=$(jq '.servers | length' $json)
-key_count=$(jq '.config.keys | length' $json)
-user_count=$(jq '.config.usernames | length' $json)
 use_aws=$(jq -r .config.aws.useaws $json)
 bucket_name=$(jq -r .config.aws.bucketname $json)
-for ((i = 1; i <= $key_count; i++))
-do
-    key+=( $(jq -r .config.keys.key$i $json) )
-done
-for ((i = 1; i <= $user_count; i++))
-do
-    username+=( $(jq -r .config.usernames.username$i $json) )
-done
 
 # Loop through the servers and perform the archival of logs.
 echo "$time_stamp - Initialization Successful." >> $log_file
@@ -61,16 +49,30 @@ for ((i = 1; i <= $server_count; i++))
 do
     server_host_ip=$(jq -r .servers.server$i.host $json)
     log_count=$(jq ".servers.server$i.logs | length" $json)
+    user_name=$(jq -r .servers.server$i.username $json)
+    key_loc=$(jq -r .servers.server$i.key $json)
     mkdir ./log-archiver-temp/$server_host_ip
 
     # Check to see if this is localhost. If not, connect to the server.
     if [ $server_host_ip == "localhost" ] || [ $server_host_ip == "127.0.0.1" ] || [ $server_host_ip == "" ];
     then
-        local_host="y"
         echo "$time_stamp - $server_host_ip - No Connection Needed" >> $log_file
+        for ((c = 1; c <= $log_count; c++))
+        do
+            log_location=$(jq -r .servers.server$i.logs.log$c $json)
+            cp $log_location ./log-archiver-temp/$server_host_ip
+            error_cp=$(echo $?)
+            if [ $error_cp == "0" ]; # Error check to make sure file copied successfully.
+            then
+                echo "$time_stamp - $server_host_ip - $log_location Copied Successfully" >> $log_file
+            else
+                echo "$time_stamp - $server_host_ip - ERROR: Copy failed for $log_location, exiting program.  CP Error Code: $error_scp" >> $log_file
+                echo "--Please check and make sure all log locations exist and that you have permission to copy them before running this script" >> $log_file
+                exit
+            fi
+        done
     else
-        local_host="n"
-        ssh -i ${key[$i]} -l ${username[$i]} $server_host_ip
+        ssh -i $key_loc -l $user_name $server_host_ip
         error_ssh=$(echo $?)
         if [ $error_ssh == "0" ];
         then
@@ -80,28 +82,10 @@ do
             echo "--Please test all SSH connections before running this script" >> $log_file
             exit
         fi
-    fi
-
-    # Loop through the logs and move them to our host for more processing.
-    for ((c = 1; c <= $log_count; c++))
-    do
-        log_location=$(jq -r .servers.server$i.logs.log$c $json)
-        if [ $local_host == "y" ];
-        then
-            cp $log_location ./log-archiver-temp/$server_host_ip
-            error_cp=$(echo $?)
-            # Error check to make sure file copied successfully.
-            if [ $error_cp == "0" ];
-            then
-                echo "$time_stamp - $server_host_ip - $log_location Copied Successfully" >> $log_file
-            else
-                echo "$time_stamp - $server_host_ip - ERROR: Copy failed for $log_location, exiting program.  CP Error Code: $error_scp" >> $log_file
-                echo "--Please check and make sure all log locations exist and that you have permission to copy them before running this script" >> $log_file
-                exit
-            fi
-
-        else
-            scp ${username[$i]}@$server_host_ip:$log_location ./log-archiver-temp/$server_host_ip
+        for ((c = 1; c <= $log_count; c++))
+        do
+            log_location=$(jq -r .servers.server$i.logs.log$c $json)
+            scp $user_name@$server_host_ip:$log_location ./log-archiver-temp/$server_host_ip
             error_scp=$(echo $?)
             if [ $error_scp == "0" ];
             then
@@ -111,8 +95,8 @@ do
                 echo "--Please check and make sure all log locations exist and that you have permission to copy them before running this script" >> $log_file
                 exit
             fi
-        fi
-    done
+        done
+    fi
 done
 echo "$time_stamp - $server_host_ip - Log Archival Complete " >> $log_file
 

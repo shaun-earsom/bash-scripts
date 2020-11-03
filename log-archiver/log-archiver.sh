@@ -53,7 +53,7 @@ do
     key_loc=$(jq -r .servers.server$i.key $json)
     mkdir ./log-archiver-temp/$server_host_ip
 
-    # Check to see if this is localhost. If not, connect to the server.
+    # Check to see if this is localhost.
     if [ $server_host_ip == "localhost" ] || [ $server_host_ip == "127.0.0.1" ] || [ $server_host_ip == "" ];
     then
         echo "$time_stamp - $server_host_ip - No Connection Needed" >> $log_file
